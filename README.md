@@ -18,6 +18,24 @@ Commands
 - `etc\winmake local` installs the build Lua version in `.\local\`
 - `etc\winmake <path>` installs the build Lua version in `<path>`
 
+File structure
+==============
+
+Installing creates a structure similar to the standard Lua MinGW install;
+````
+{root}
+  +-- bin
+  +-- include
+  +-- lib
+  |    +-- lua
+  |         +-- <LuaVersion>
+  +-- man
+  |    +-- man1
+  +-- share
+       +-- lua
+            +-- <LuaVersion>
+````
+
 Compatibility
 =============
 
