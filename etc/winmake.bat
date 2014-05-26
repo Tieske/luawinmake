@@ -102,6 +102,28 @@ if NOT %CMDOK%==TRUE (
    goto :EXITERROR
 )
 
+REM **************************************
+REM *   Check for cleaning               *
+REM **************************************
+
+if "%1"=="clean" (
+   if NOT [%2]==[] (
+      echo.
+      echo ERROR: The clean command does not take extra parameters.
+   ) else (
+      echo Cleaning...
+      if exist "%SOURCE%*.exe" del "%SOURCE%*.exe"
+      if exist "%SOURCE%*.dll" del "%SOURCE%*.dll"
+      if exist "%SOURCE%*.o" del "%SOURCE%*.o"
+      if exist "%SOURCE%*.a" del "%SOURCE%*.a"
+      if exist "%SOURCE%*.obj" del "%SOURCE%*.obj"
+      if exist "%SOURCE%*.manifest" del "%SOURCE%*.manifest"
+      if exist "%SOURCE%*.lib" del "%SOURCE%*.lib"
+      echo Done.
+   )
+   goto :EXITOK
+)
+
 REM **************************************************
 REM *   Fetch the Lua version from the source code   *
 REM **************************************************
@@ -218,32 +240,6 @@ if %TOOLCHAIN%==MS (
    SET LIBFILE=lua%LUA_SVER%.lib
 )
 echo.
-
-REM **************************************
-REM *   Check for cleaning               *
-REM **************************************
-
-if "%1"=="clean" (
-   if NOT [%2]==[] (
-      echo.
-      echo ERROR: The clean command does not take extra parameters.
-   ) else (
-      echo Cleaning...
-      del %SOURCE%*.exe
-      del %SOURCE%*.dll
-      if %TOOLCHAIN%==GCC (
-         del %SOURCE%*.o
-         del %SOURCE%*.a
-      )
-      if %TOOLCHAIN%==MS (
-         del %SOURCE%*.obj
-         del %SOURCE%*.manifest
-         del %SOURCE%*.lib
-      )
-      echo Done.
-   )
-   goto :EXITOK
-)
 
 REM **************************************
 REM *   Check for installing             *
