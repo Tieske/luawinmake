@@ -16,7 +16,7 @@ Commands
 - `etc\winmake <toolchain>` builds using the specified toolchain, skips auto detection
 - `etc\winmake clean` cleans the (intermediate) build results
 - `etc\winmake local` installs the build Lua version in `.\local\`
-- `etc\winmake <path>` installs the build Lua version in `<path>`
+- `etc\winmake install <path>` installs the build Lua version in `<path>`
 
 File structure
 ==============
