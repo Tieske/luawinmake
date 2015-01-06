@@ -13,6 +13,9 @@ SET SOURCETREE=.\
 REM set the toolchain to either MS or GCC (allcaps), leave blank to autodetect
 SET TOOLCHAIN=
 
+REM set the compatibility flags, defaults to empty for 5.1, -DLUA_COMPAT_ALL for 5.2, 
+REM and -DLUA_COMPAT_5_2 for 5.3, which are the same as the unix make files
+SET COMPATFLAG=
 
 
 
@@ -190,6 +193,9 @@ if %LUA_SVER%==52 (
    set FILES_DLL=lua
    set FILES_OTH=luac
    set INSTALL_H=lauxlib.h lua.h lua.hpp luaconf.h lualib.h
+   if "%COMPATFLAG%"=="" (
+      set COMPATFLAG=-DLUA_COMPAT_ALL
+   )
 )
 if %LUA_SVER%==53 (
    set FILES_CORE=lapi lcode lctype ldebug ldo ldump lfunc lgc llex lmem lobject lopcodes lparser lstate lstring ltable ltm lundump lvm lzio lauxlib
@@ -197,6 +203,9 @@ if %LUA_SVER%==53 (
    set FILES_DLL=lua
    set FILES_OTH=luac
    set INSTALL_H=lauxlib.h lua.h lua.hpp luaconf.h lualib.h
+   if "%COMPATFLAG%"=="" (
+      set COMPATFLAG=-DLUA_COMPAT_5_2
+   )
 )
 
 SET FILES_BASE=%FILES_DLL% %FILES_CORE% %FILES_LIB%
@@ -290,7 +299,7 @@ goto :after_compile_function
    for %%a in (%~1) do (
       SET FILENAME=%%a
       if %TOOLCHAIN%==GCC (
-         SET COMPCMD=gcc -O2 -Wall !EXTRAFLAG! -DLUA_COMPAT_ALL -c -o !FILENAME!.%OBJEXT% !FILENAME!.c
+         SET COMPCMD=gcc -O2 -Wall !EXTRAFLAG! !COMPATFLAG! -c -o !FILENAME!.%OBJEXT% !FILENAME!.c
       )
       if %TOOLCHAIN%==MS (
          SET COMPCMD=cl /nologo /MD /O2 /W3 /c /D_CRT_SECURE_NO_DEPRECATE /DLUA_COMPAT_ALL !EXTRAFLAG! !FILENAME!.c
