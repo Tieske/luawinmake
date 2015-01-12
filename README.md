@@ -6,7 +6,7 @@ in your downloaded and unpacked Lua source folder (in a `/etc/` subfolder). And 
 root folder to build Lua.
 
 Make sure that your compiler is in your system path before running it. For the Microsoft toolchains
-you can use their commandshell. TDM also has a shell available.
+you can use their commandshell. The TDM release also has a shell available for 32 and 64 bit.
 
 Commands
 ========
@@ -43,15 +43,22 @@ It auto detects the Lua version from the source code. It was tested with;
 
 - 5.1.5
 - 5.2.1
-- 5.3-work2
+- 5.3-RC4
+
+Lua is build with the default compatibility options (mimics the unix makefiles for each of the Lua versions listed above).
 
 It supports MS and GCC based compilers (autodetects; uses the first one found in the system path), and was tested with;
 
- - Win7 SDK
- - Visual Studio 2010
- - MinGW
- - TDM32
- - TDM64
+- Win7 SDK
+- Visual Studio 2008, 2010, 2012 and 2013
+- MinGW
+- TDM32
+- TDM64
+
+Thanks to
+=========
+- The Lua team for a great language
+- @ignacio for testing various Visual Studio builds
 
 License
 =======
