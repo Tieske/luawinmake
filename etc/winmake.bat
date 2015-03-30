@@ -201,7 +201,7 @@ if %LUA_SVER%==51 (
    set FILES_LIB=lbaselib ldblib liolib lmathlib loslib ltablib lstrlib loadlib linit
    set FILES_DLL=lua 
    set FILES_OTH=luac print
-   set INSTALL_H=lauxlib.h lua.h luaconf.h lualib.h
+   set INSTALL_H=lauxlib.h lua.h luaconf.h lualib.h ..\etc\lua.hpp
 )
 if %LUA_SVER%==52 (
    set FILES_CORE=lapi lcode lctype ldebug ldo ldump lfunc lgc llex lmem lobject lopcodes lparser lstate lstring ltable ltm lundump lvm lzio lauxlib
