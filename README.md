@@ -18,6 +18,9 @@ Commands
 - `etc\winmake local` installs the build Lua version in `.\local\`
 - `etc\winmake install <path>` installs the build Lua version in `<path>`
 
+Available flags;
+- `--nocompat` When building, this will disable all compatibilty flags (otherwise default flags same as the MinGW make file will be used)
+
 File structure
 ==============
 
@@ -45,7 +48,8 @@ It auto detects the Lua version from the source code. It was tested with;
 - 5.2
 - 5.3
 
-Lua is build with the default compatibility options (mimics the unix makefiles for each of the Lua versions listed above).
+Lua is build with the default compatibility options (mimics the unix makefiles for each 
+of the Lua versions listed above). Unless the `--nocompat` flag is used.
 
 It supports MS and GCC based compilers (autodetects; uses the first one found in the system path), and was tested with;
 
