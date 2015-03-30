@@ -15,6 +15,7 @@ SET TOOLCHAIN=
 
 REM set the compatibility flags, defaults to empty for 5.1, -DLUA_COMPAT_ALL for 5.2, 
 REM and -DLUA_COMPAT_5_2 for 5.3, which are the same as the unix make files
+REM This setting can be overridden with the --nocompat flag
 SET COMPATFLAG=
 
 
@@ -29,6 +30,7 @@ REM **********************************
 REM *   Nothing to customize below   *
 REM **********************************
 
+SET BATCHNAME=%~n0
 SET SOURCE=%SOURCETREE%src\
 SET LUA_H=%SOURCE%lua.h
 SET CURDIR=%CD%
@@ -56,10 +58,10 @@ for %%L in ("!LFCHAR!") do for /f %%a in ("!HELPCMDS: =%%~L!") do (
    if "%%a"=="%~1" (
       echo.
       echo Builds a standalone Lua installation. Supports Lua version 5.1, 5.2 and 5.3.
-      echo Your compiler must be in the system path, and this "%~n0.bat" file must be located
+      echo Your compiler must be in the system path, and this "%BATCHNAME%.bat" file must be located
       echo in ".\etc\" in the unpacked Lua source archive.
       echo.
-      echo USAGE etc\%~n0 [COMMAND] [...]
+      echo USAGE etc\%BATCHNAME% [FLAG] [COMMAND] [...]
       echo ^(execute from the root of the unpacked archive^)
       echo.
       echo Commands;
@@ -70,11 +72,16 @@ for %%L in ("!LFCHAR!") do for /f %%a in ("!HELPCMDS: =%%~L!") do (
       echo                    toolchains will be tested and the first available will be picked.
       echo                    Supported toolchains are: "%TOOLCHAINS%" ^(must use ALLCAPS^)
       echo.
+      echo Flags;
+      echo   --nocompat     : Specifies that no compatibility flags should be set when building.
+      echo                    If not specified, the default compatibility flags will be used.
+      echo.
       echo Example use;
       echo   set PATH=C:\path\to\your\compiler\;%%PATH%%
-      echo   etc\%~n0 clean
-      echo   etc\%~n0
-      echo   etc\%~n0 install "C:\Program Files\Lua"
+      echo   etc\%BATCHNAME% clean
+      echo   etc\%BATCHNAME%
+      echo   etc\%BATCHNAME% --nocompat GCC
+      echo   etc\%BATCHNAME% install "C:\Program Files\Lua"
       echo.
       goto :EXITOK
    )
@@ -91,6 +98,15 @@ if "%~1"=="" (
 for %%a in (local install clean) do ( 
    if "%%a"=="%~1" (
       SET CMDOK=TRUE
+   )
+)
+for %%a in (--nocompat) do ( 
+   if "%%a"=="%~1" (
+      SET NOCOMPAT=TRUE
+      if "%~2"=="" (
+         SET CMDOK=TRUE
+      )
+      SHIFT
    )
 )
 for %%a in (%TOOLCHAINS%) do ( 
@@ -206,6 +222,10 @@ if %LUA_SVER%==53 (
    if "%COMPATFLAG%"=="" (
       set COMPATFLAG=-DLUA_COMPAT_5_2
    )
+)
+
+if "%NOCOMPAT%"=="TRUE" (
+   set COMPATFLAG=
 )
 
 SET FILES_BASE=%FILES_DLL% %FILES_CORE% %FILES_LIB%
@@ -433,5 +453,5 @@ goto :EXITOK
 exit /B 0
 
 :EXITERROR
-echo For help try; etc\%~n0 /help
+echo For help try; etc\%BATCHNAME% /help
 exit /B 1
