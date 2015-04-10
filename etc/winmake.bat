@@ -322,7 +322,7 @@ goto :after_compile_function
          SET COMPCMD=gcc -O2 -Wall !EXTRAFLAG! !COMPATFLAG! -c -o !FILENAME!.%OBJEXT% !FILENAME!.c
       )
       if %TOOLCHAIN%==MS (
-         SET COMPCMD=cl /nologo /MD /O2 /W3 /c /D_CRT_SECURE_NO_DEPRECATE /DLUA_COMPAT_ALL !EXTRAFLAG! !FILENAME!.c
+         SET COMPCMD=cl /nologo /MD /O2 /W3 /c /D_CRT_SECURE_NO_DEPRECATE !COMPATFLAG! !EXTRAFLAG! !FILENAME!.c
       )
       echo !COMPCMD!
       !COMPCMD!
