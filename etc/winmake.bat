@@ -67,7 +67,10 @@ for %%L in ("!LFCHAR!") do for /f %%a in ("!HELPCMDS: =%%~L!") do (
       echo Commands;
       echo   clean          : cleans the source tree of build ^(intermediate^) files
       echo   install [path] : installs the build results into "path"
+      echo   installv [path]: installs the build results into "path" in a versioned manner
       echo   local          : installs into ".\local\" in the unpacked Lua source structure
+      echo   localv         : installs into ".\local\" in the unpacked Lua source structure in a
+      echo                    versioned manner
       echo   [toolchain]    : uses a specific toolchain to build. If not provided then supported
       echo                    toolchains will be tested and the first available will be picked.
       echo                    Supported toolchains are: "%TOOLCHAINS%" ^(must use ALLCAPS^)
@@ -274,32 +277,49 @@ REM **************************************
 REM *   Check for installing             *
 REM **************************************
 
-if "%1"=="install" (
-   if "%~2"=="" (
-      echo.
-      echo ERROR: The install command requires a path where to install to.
-      goto :EXITERROR
-   )
-   SET TARGETPATH=%~2
+if not "%1"=="install" if not "%1"=="installv" goto try_local
+if "%~2"=="" (
+   echo.
+   echo ERROR: The install(v) command requires a path where to install to.
+   goto :EXITERROR
 )
-if "%1"=="local" (
-   if NOT "%~2"=="" (
-      echo.
-      echo ERROR: The local command does not take extra parameters.
-      goto :EXITERROR
-   )
-   SET TARGETPATH=%SOURCETREE%local
+SET TARGETPATH=%~2
+if "%1"=="installv" set VERSIONED=TRUE
+
+:try_local
+if not "%1"=="local" if not "%1"=="localv" goto try_install
+if NOT "%~2"=="" (
+   echo.
+   echo ERROR: The local(v) command does not take extra parameters.
+   goto :EXITERROR
 )
+SET TARGETPATH=%SOURCETREE%local
+if "%1"=="localv" set VERSIONED=TRUE
+
+:try_install
 if NOT "%TARGETPATH%"=="" (
    mkdir "%TARGETPATH%\bin"
-   mkdir "%TARGETPATH%\include"
+   if %VERSIONED%==TRUE (
+      mkdir "%TARGETPATH%\include\lua\%LUA_VER%"
+   ) else (
+      mkdir "%TARGETPATH%\include"
+   )
    mkdir "%TARGETPATH%\lib\lua\%LUA_VER%"
    mkdir "%TARGETPATH%\man\man1"
    mkdir "%TARGETPATH%\share\lua\%LUA_VER%"
-   copy "%SOURCE%lua.exe" "%TARGETPATH%\bin"
-   copy "%SOURCE%luac.exe" "%TARGETPATH%\bin"
+   if %VERSIONED%==TRUE (
+      copy "%SOURCE%lua.exe" "%TARGETPATH%\bin\lua%LUA_SVER%.exe"
+      copy "%SOURCE%luac.exe" "%TARGETPATH%\bin\luac%LUA_SVER%.exe"
+   ) else (
+      copy "%SOURCE%lua.exe" "%TARGETPATH%\bin"
+      copy "%SOURCE%luac.exe" "%TARGETPATH%\bin"
+   )
    copy "%SOURCE%lua%LUA_SVER%.dll" "%TARGETPATH%\bin"
-   for %%a in (%INSTALL_H%) do ( copy "%SOURCE%%%a" "%TARGETPATH%\include" )
+   if %VERSIONED%==TRUE (
+      for %%a in (%INSTALL_H%) do ( copy "%SOURCE%%%a" "%TARGETPATH%\include\lua\%LUA_VER%" )
+   ) else (
+      for %%a in (%INSTALL_H%) do ( copy "%SOURCE%%%a" "%TARGETPATH%\include" )
+   )
    copy "%SOURCE%%LIBFILE%" "%TARGETPATH%\lib"
    copy "%SOURCETREE%doc\lua.1" "%TARGETPATH%\man\man1"
    copy "%SOURCETREE%doc\luac.1" "%TARGETPATH%\man\man1"
