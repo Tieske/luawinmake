@@ -299,7 +299,7 @@ if "%1"=="localv" set VERSIONED=TRUE
 :try_install
 if NOT "%TARGETPATH%"=="" (
    mkdir "%TARGETPATH%\bin"
-   if %VERSIONED%==TRUE (
+   if "%VERSIONED%"=="TRUE" (
       mkdir "%TARGETPATH%\include\lua\%LUA_VER%"
    ) else (
       mkdir "%TARGETPATH%\include"
@@ -307,7 +307,7 @@ if NOT "%TARGETPATH%"=="" (
    mkdir "%TARGETPATH%\lib\lua\%LUA_VER%"
    mkdir "%TARGETPATH%\man\man1"
    mkdir "%TARGETPATH%\share\lua\%LUA_VER%"
-   if %VERSIONED%==TRUE (
+   if "%VERSIONED%"=="TRUE" (
       copy "%SOURCE%lua.exe" "%TARGETPATH%\bin\lua%LUA_SVER%.exe"
       copy "%SOURCE%luac.exe" "%TARGETPATH%\bin\luac%LUA_SVER%.exe"
    ) else (
@@ -315,7 +315,7 @@ if NOT "%TARGETPATH%"=="" (
       copy "%SOURCE%luac.exe" "%TARGETPATH%\bin"
    )
    copy "%SOURCE%lua%LUA_SVER%.dll" "%TARGETPATH%\bin"
-   if %VERSIONED%==TRUE (
+   if "%VERSIONED%"=="TRUE" (
       for %%a in (%INSTALL_H%) do ( copy "%SOURCE%%%a" "%TARGETPATH%\include\lua\%LUA_VER%" )
    ) else (
       for %%a in (%INSTALL_H%) do ( copy "%SOURCE%%%a" "%TARGETPATH%\include" )
