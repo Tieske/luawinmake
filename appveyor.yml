@@ -1,0 +1,48 @@
+version: 0.0.1.{build}-test
+
+shallow_clone: true
+
+environment:
+  matrix:
+  - LUA_VER: 5.1.5
+  - LUA_VER: 5.2.4
+    NOCOMPAT: true
+  - LUA_VER: 5.3.1
+    NOCOMPAT: true
+
+# Abuse this section so we can have a matrix with different Compiler versions
+# Is there a better way? Like injecting an array in the matrix?
+configuration:
+ - 2015
+ - 2013
+ - 2012
+ - MinGW
+ #- 2010
+ #- 2008
+
+platform:
+  - x86
+  - x64
+
+init:
+
+install:
+# Make compiler command line tools available
+- call .appveyor\set_compiler_env.bat
+# Get Lua sources
+- call .appveyor\install.bat
+
+before_build:
+
+build_script:
+- call .appveyor\build.bat
+
+before_test:
+
+test_script:
+- echo "Testing..."
+- call lua -v
+
+on_success:
+# - echo "Generating artifacts"
+# - call .appveyor\artifacts.bat
