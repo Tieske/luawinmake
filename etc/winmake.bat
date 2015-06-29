@@ -98,7 +98,7 @@ SET CMDOK=FALSE
 if "%~1"=="" (
    SET CMDOK=TRUE
 )
-for %%a in (local install clean) do ( 
+for %%a in (local localv install installv clean) do ( 
    if "%%a"=="%~1" (
       SET CMDOK=TRUE
    )
