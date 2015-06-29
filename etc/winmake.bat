@@ -280,7 +280,7 @@ REM **************************************
 if not "%1"=="install" if not "%1"=="installv" goto try_local
 if "%~2"=="" (
    echo.
-   echo ERROR: The install(v) command requires a path where to install to.
+   echo ERROR: The install^(v^) command requires a path where to install to.
    goto :EXITERROR
 )
 SET TARGETPATH=%~2
@@ -290,7 +290,7 @@ if "%1"=="installv" set VERSIONED=TRUE
 if not "%1"=="local" if not "%1"=="localv" goto try_install
 if NOT "%~2"=="" (
    echo.
-   echo ERROR: The local(v) command does not take extra parameters.
+   echo ERROR: The local^(v^) command does not take extra parameters.
    goto :EXITERROR
 )
 SET TARGETPATH=%SOURCETREE%local
