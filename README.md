@@ -1,6 +1,8 @@
 luawinmake
 ==========
 
+[![Build status](https://ci.appveyor.com/api/projects/status/github/tieske/luawinmake?branch=master&svg=true)](https://ci.appveyor.com/project/tieske/luawinmake)
+
 Windows batch file to build Lua from source. Simply place the `./etc/winmake.bat` file 
 in your downloaded and unpacked Lua source folder (in a `/etc/` subfolder). And run it from the
 root folder to build Lua.
