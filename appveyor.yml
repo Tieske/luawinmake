@@ -44,5 +44,8 @@ test_script:
 - call lua -v
 
 on_success:
-# - echo "Generating artifacts"
-# - call .appveyor\artifacts.bat
+- echo "Generating artifacts"
+# Must be done here instead of in a batch file (it times out)
+- cd %INSTALL_DIR%
+- 7z a luawinmake-%LUA_VER%-%APPVEYOR_REPO_COMMIT%-%platform%-%Configuration%.7z %INSTALL_DIR%\*
+- appveyor PushArtifact luawinmake-%LUA_VER%-%APPVEYOR_REPO_COMMIT%-%platform%-%Configuration%.7z
