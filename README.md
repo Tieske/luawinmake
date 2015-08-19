@@ -56,7 +56,7 @@ of the Lua versions listed above). Unless the `--nocompat` flag is used.
 It supports MS and GCC based compilers (autodetects; uses the first one found in the system path), and was tested with;
 
 - Win7 SDK
-- Visual Studio 2008, 2010, 2012 and 2013
+- Visual Studio 2008, 2010, 2012, 2013 and 2015
 - MinGW
 - TDM32
 - TDM64
