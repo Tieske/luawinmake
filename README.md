@@ -18,7 +18,9 @@ Commands
 - `etc\winmake <toolchain>` builds using the specified toolchain, skips auto detection
 - `etc\winmake clean` cleans the (intermediate) build results
 - `etc\winmake local` installs the build Lua version in `.\local\`
+- `etc\winmake localv` installs the build Lua version in `.\local\` in a versioned manner
 - `etc\winmake install <path>` installs the build Lua version in `<path>`
+- `etc\winmake install <path>` installs the build Lua version in `<path>` in a versioned manner
 
 Available flags;
 - `--nocompat` When building, this will disable all compatibilty flags (otherwise default flags same as the MinGW make file will be used)
@@ -31,6 +33,23 @@ Installing creates a structure similar to the standard Lua MinGW install;
 {root}
   +-- bin
   +-- include
+  +-- lib
+  |    +-- lua
+  |         +-- <LuaVersion>
+  +-- man
+  |    +-- man1
+  +-- share
+       +-- lua
+            +-- <LuaVersion>
+````
+
+The `localv` and `installv` commands create versioned installations, with the following differences;
+````
+{root}
+  +-- bin                      --> eg. contains lua52.exe and luac52.exe
+  +-- include
+  |    +-- lua
+  |         +-- <LuaVersion>   --> containing the header files
   +-- lib
   |    +-- lua
   |         +-- <LuaVersion>
