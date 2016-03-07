@@ -47,7 +47,7 @@ REM Supported toolchains (allcaps)
 SET TOOLCHAINS=MS GCC
 REM Commands which, if exiting without error, indicate presence of the toolchain
 SET CHECK_GCC=gcc --version
-SET CHECK_MS=cl
+SET CHECK_MS=cl /help ^> %TEMP%\NULL
 
 REM **********************************
 REM *   Check for help request       *
