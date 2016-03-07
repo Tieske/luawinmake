@@ -10,6 +10,8 @@ root folder to build Lua (eg.  `etc\winmake /help`).
 Make sure that your compiler is in your system path before running it. For the Microsoft toolchains
 you can use their commandshell. The TDM release also has a shell available for 32 and 64 bit.
 
+NOTE: if you're interested in a more complete Lua setup, checkout [luawinmulti](https://github.com/Tieske/luawinmulti), which builds on top of luawinmake.
+
 Commands
 ========
 
