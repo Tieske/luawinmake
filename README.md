@@ -78,6 +78,7 @@ It auto detects the Lua version from the source code. It was tested with;
 - 5.1
 - 5.2
 - 5.3
+- 5.4
 
 Lua is build with the default compatibility options (mimics the unix makefiles for each 
 of the Lua versions listed above). Unless the `--nocompat` flag is used.

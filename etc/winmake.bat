@@ -10,8 +10,11 @@ REM use the /help option for generic usage information
 REM set the toolchain to either MS or GCC (allcaps), leave blank to autodetect
 SET TOOLCHAIN=
 
-REM set the compatibility flags, defaults to empty for 5.1, -DLUA_COMPAT_ALL for 5.2, 
-REM and -DLUA_COMPAT_5_2 for 5.3, which are the same as the unix make files
+REM set the compatibility flags, defaults to empty for 5.1,
+REM -DLUA_COMPAT_ALL for 5.2, 
+REM -DLUA_COMPAT_5_2 for 5.3,
+REM -DLUA_COMPAT_5_3 for 5.4,
+REM which are the same as the unix make files
 REM This setting can be overridden with the --nocompat flag
 SET COMPATFLAG=
 
@@ -75,7 +78,7 @@ SET HELPCMDS=help -help --help /help ? -? /?
 for %%L in ("!LFCHAR!") do for /f %%a in ("!HELPCMDS: =%%~L!") do (
    if "%%a"=="%~1" (
       echo.
-      echo Builds a standalone Lua installation. Supports Lua version 5.1, 5.2 and 5.3.
+      echo Builds a standalone Lua installation. Supports Lua version 5.1, 5.2, 5.3, and 5.4.
       echo Your compiler must be in the system path, and this "%BATCHNAME%.bat" file
       echo should ^(preferably^) be located in ".\etc\" in the unpacked Lua source archive.
       echo.
@@ -242,6 +245,16 @@ if %LUA_SVER%==53 (
    set INSTALL_H=lauxlib.h lua.h lua.hpp luaconf.h lualib.h
    if "%COMPATFLAG%"=="" (
       set COMPATFLAG=-DLUA_COMPAT_5_2
+   )
+)
+if %LUA_SVER%==54 (
+   set FILES_CORE=lapi lcode lctype ldebug ldo ldump lfunc lgc llex lmem lobject lopcodes lparser lstate lstring ltable ltm lundump lvm lzio lauxlib
+   set FILES_LIB=lbaselib lcorolib ldblib liolib lmathlib loadlib loslib lstrlib ltablib lutf8lib linit
+   set FILES_DLL=lua
+   set FILES_OTH=luac
+   set INSTALL_H=lauxlib.h lua.h lua.hpp luaconf.h lualib.h
+   if "%COMPATFLAG%"=="" (
+      set COMPATFLAG=-DLUA_COMPAT_5_3
    )
 )
 
