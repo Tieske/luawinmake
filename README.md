@@ -12,6 +12,12 @@ you can use their commandshell. The TDM release also has a shell available for 3
 
 NOTE: if you're interested in a more complete Lua setup, checkout [luawinmulti](https://github.com/Tieske/luawinmulti), which builds on top of luawinmake.
 
+Downloads
+=========
+
+If all you need is a quick Windows binary, then checkout the [CI build artifacts](https://ci.appveyor.com/project/tieske/luawinmake).
+Select the version you need and download the archive from the artifacts.
+
 Commands
 ========
 
