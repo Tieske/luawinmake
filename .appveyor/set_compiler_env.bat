@@ -11,6 +11,10 @@ set arch=x86
 
 if "%platform%" EQU "x64" ( set arch=x86_amd64 )
 
+if "%Configuration%"=="2017" (
+	set SET_VS_ENV="C:\Program Files (x86)\Microsoft Visual Studio 15.0\VC\vcvarsall.bat"
+)
+
 if "%Configuration%"=="2015" (
 	set SET_VS_ENV="C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
 )

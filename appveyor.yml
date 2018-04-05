@@ -15,6 +15,7 @@ environment:
 # Abuse this section so we can have a matrix with different Compiler versions
 # Is there a better way? Like injecting an array in the matrix?
 configuration:
+ - 2017
  - 2015
  - 2013
  - 2012
