@@ -3,9 +3,11 @@ luawinmake
 
 [![Build status](https://ci.appveyor.com/api/projects/status/github/tieske/luawinmake?branch=master&svg=true)](https://ci.appveyor.com/project/tieske/luawinmake)
 
-Windows batch file to build Lua from source. Simply place the `./etc/winmake.bat` file 
-in your downloaded and unpacked Lua source folder (in a `/etc/` subfolder). And run it from the
+Windows batch file to build Lua from source. Simply place the `.\etc\winmake.bat` file 
+in your downloaded and unpacked Lua source folder (preferably in a `\etc\` subfolder). And run it from the
 root folder to build Lua (eg.  `etc\winmake /help`).
+
+Since there also is a [Github repo with Lua sources](https://github.com/lua/lua) you can now also use `winmake` to build from those sources (file structure with `.\etc\` and `.\src\` is no longer required).
 
 Make sure that your compiler is in your system path before running it. For the Microsoft toolchains
 you can use their commandshell. The TDM release also has a shell available for 32 and 64 bit.

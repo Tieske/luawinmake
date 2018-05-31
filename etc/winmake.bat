@@ -7,9 +7,6 @@ REM *****************************
 
 REM use the /help option for generic usage information
 
-REM Where is the source code located (the unpacked Lua source archive, toplevel dir)
-SET SOURCETREE=.\
-
 REM set the toolchain to either MS or GCC (allcaps), leave blank to autodetect
 SET TOOLCHAIN=
 
@@ -31,14 +28,34 @@ REM *   Nothing to customize below   *
 REM **********************************
 
 SET BATCHNAME=%~n0
-SET SOURCE=%SOURCETREE%src\
-SET LUA_H=%SOURCE%lua.h
 SET CURDIR=%CD%
+SET SOURCETREE=.\
+SET SOURCE=%SOURCETREE%src\
+
+REM figure out where we are
+IF EXIST ..\src\lua.h (
+   REM we're in the /src/ or /etc/ dir of a Lua distribution package
+   REM move to top level
+   CD ..
+)
+
+IF EXIST .\src\lua.h (
+   REM we're in the top-level dir of a Lua distribution package
+   SET SOURCETREE=%CD%\
+   SET SOURCE=%SOURCETREE%src\
+) ELSE (
+   IF EXIST .\lua.h (
+      REM we're in some flat source distro
+      SET SOURCETREE=%CD%\
+      SET SOURCE=%SOURCETREE%
+   )
+)
+SET LUA_H=%SOURCE%lua.h
 
 REM the following line ends with a TAB. DO NOT REMOVE IT!
 SET TABCHAR=	
 REM Define LF to contain a linefeed character
-set ^"LFCHAR=^
+SET ^"LFCHAR=^
 
 ^" The above empty line is critical. DO NOT REMOVE
 
@@ -46,8 +63,9 @@ set ^"LFCHAR=^
 REM Supported toolchains (allcaps)
 SET TOOLCHAINS=MS GCC
 REM Commands which, if exiting without error, indicate presence of the toolchain
-SET CHECK_GCC=gcc --version
-SET CHECK_MS=cl /help ^> %TEMP%\NULL
+SET CHECK_GCC=gcc --version 1^>NUL 2^>NUL
+SET CHECK_MS=cl /help ^> %TEMP%\NULL 2^>NUL
+
 
 REM **********************************
 REM *   Check for help request       *
@@ -58,8 +76,8 @@ for %%L in ("!LFCHAR!") do for /f %%a in ("!HELPCMDS: =%%~L!") do (
    if "%%a"=="%~1" (
       echo.
       echo Builds a standalone Lua installation. Supports Lua version 5.1, 5.2 and 5.3.
-      echo Your compiler must be in the system path, and this "%BATCHNAME%.bat" file must be located
-      echo in ".\etc\" in the unpacked Lua source archive.
+      echo Your compiler must be in the system path, and this "%BATCHNAME%.bat" file
+      echo should ^(preferably^) be located in ".\etc\" in the unpacked Lua source archive.
       echo.
       echo USAGE etc\%BATCHNAME% [FLAG] [COMMAND] [...]
       echo ^(execute from the root of the unpacked archive^)
@@ -152,8 +170,8 @@ REM **************************************************
 
 Echo.
 Echo Checking source code to extract Lua version...
-IF NOT EXIST %LUA_H% (
-   Echo Cannot locate Lua header file; %LUA_H%
+IF NOT EXIST "%LUA_H%" (
+   Echo Cannot locate Lua header file: %LUA_H%
    goto :EXITERROR
 )
 
@@ -243,14 +261,25 @@ REM *   Check available toolchain   *
 REM *********************************
 
 if [%TOOLCHAIN%]==[] (
-   Echo Testing for MS...
-   %CHECK_MS%
-   IF !ERRORLEVEL!==0 SET TOOLCHAIN=MS
-)
-if [%TOOLCHAIN%]==[] (
-   Echo Testing for GCC...
+   Echo Testing for toolchains...
+
+   %CHECK_MS% 
+   IF !ERRORLEVEL!==0 (
+      Echo Microsoft toolchain found
+      SET TOOLCHAIN=MS
+   ) ELSE (
+      Echo Microsoft toolchain not found
+   )
+
    %CHECK_GCC%
-   IF !ERRORLEVEL!==0 SET TOOLCHAIN=GCC
+   IF !ERRORLEVEL!==0 (
+      Echo GCC toolchain found
+      if [!TOOLCHAIN!]==[] (
+         SET TOOLCHAIN=GCC
+      )
+   ) ELSE (
+      Echo GCC toolchain not found
+   )
 )
 if [%TOOLCHAIN%]==[] (
    Echo No supported toolchain found ^(please make sure it is in the system path^)
@@ -271,11 +300,10 @@ if %TOOLCHAIN%==MS (
    SET OBJEXT=obj
    SET LIBFILE=lua%LUA_SVER%.lib
 )
-echo.
 
-REM **************************************
-REM *   Check for installing             *
-REM **************************************
+REM **********************************
+REM *         Installing             *
+REM **********************************
 
 if not "%1"=="install" if not "%1"=="installv" goto try_local
 if "%~2"=="" (
@@ -298,6 +326,8 @@ if "%1"=="localv" set VERSIONED=TRUE
 
 :try_install
 if NOT "%TARGETPATH%"=="" (
+   echo.
+   echo Creating target directory structure...
    mkdir "%TARGETPATH%\bin"
    if "%VERSIONED%"=="TRUE" (
       mkdir "%TARGETPATH%\include\lua\%LUA_VER%"
@@ -307,22 +337,26 @@ if NOT "%TARGETPATH%"=="" (
    mkdir "%TARGETPATH%\lib\lua\%LUA_VER%"
    mkdir "%TARGETPATH%\man\man1"
    mkdir "%TARGETPATH%\share\lua\%LUA_VER%"
+   echo Copying files...
    if "%VERSIONED%"=="TRUE" (
-      copy "%SOURCE%lua.exe" "%TARGETPATH%\bin\lua%LUA_SVER%.exe"
-      copy "%SOURCE%luac.exe" "%TARGETPATH%\bin\luac%LUA_SVER%.exe"
+      copy "%SOURCE%lua.exe" "%TARGETPATH%\bin\lua%LUA_SVER%.exe" >NUL
+      copy "%SOURCE%luac.exe" "%TARGETPATH%\bin\luac%LUA_SVER%.exe" >NUL
    ) else (
-      copy "%SOURCE%lua.exe" "%TARGETPATH%\bin"
-      copy "%SOURCE%luac.exe" "%TARGETPATH%\bin"
+      copy "%SOURCE%lua.exe" "%TARGETPATH%\bin" >NUL
+      copy "%SOURCE%luac.exe" "%TARGETPATH%\bin" >NUL
    )
-   copy "%SOURCE%lua%LUA_SVER%.dll" "%TARGETPATH%\bin"
+   copy "%SOURCE%lua%LUA_SVER%.dll" "%TARGETPATH%\bin" >NUL
    if "%VERSIONED%"=="TRUE" (
-      for %%a in (%INSTALL_H%) do ( copy "%SOURCE%%%a" "%TARGETPATH%\include\lua\%LUA_VER%" )
+      for %%a in (%INSTALL_H%) do ( copy "%SOURCE%%%a" "%TARGETPATH%\include\lua\%LUA_VER%" >NUL )
    ) else (
-      for %%a in (%INSTALL_H%) do ( copy "%SOURCE%%%a" "%TARGETPATH%\include" )
+      for %%a in (%INSTALL_H%) do ( copy "%SOURCE%%%a" "%TARGETPATH%\include" >NUL )
    )
-   copy "%SOURCE%%LIBFILE%" "%TARGETPATH%\lib"
-   copy "%SOURCETREE%doc\lua.1" "%TARGETPATH%\man\man1"
-   copy "%SOURCETREE%doc\luac.1" "%TARGETPATH%\man\man1"
+   copy "%SOURCE%%LIBFILE%" "%TARGETPATH%\lib" >NUL
+   if exist "%SOURCETREE%doc\lua.1" (
+      REM these do not exist in flat-source distros like github clones
+      copy "%SOURCETREE%doc\lua.1" "%TARGETPATH%\man\man1" >NUL
+      copy "%SOURCETREE%doc\luac.1" "%TARGETPATH%\man\man1" >NUL
+   )
 
    echo Installation completed in "%TARGETPATH%".
    goto :EXITOK
@@ -369,6 +403,7 @@ for %%b in (CORE LIB DLL OTH) do (
    if !LTYPE!==DLL SET FILELIST=%FILES_DLL%
    if !LTYPE!==OTH SET FILELIST=%FILES_OTH%
 
+   echo.
    echo Now compiling !LTYPE! file set...
    call:compile_function "!FILELIST!"
 
@@ -378,6 +413,13 @@ for %%b in (CORE LIB DLL OTH) do (
    if !LTYPE!==OTH SET FILES_OTH_O=!OBJLIST!
 )
 
+
+REM ****************
+REM *   Linking    *
+REM ****************
+
+echo.
+echo Now linking libraries and executables...
 
 REM ****************************
 REM *   Link GCC based files   *
@@ -459,7 +501,6 @@ if %TOOLCHAIN%==MS (
    )
 )
 
-CD %CURDIR%
 
 REM ****************************
 REM *   Finished building      *
@@ -470,8 +511,10 @@ echo Build completed.
 goto :EXITOK
 
 :EXITOK
+CD %CURDIR%
 exit /B 0
 
 :EXITERROR
-echo For help try; etc\%BATCHNAME% /help
+echo For help try: %BATCHNAME% /help
+CD %CURDIR%
 exit /B 1
