@@ -188,35 +188,63 @@ if NOT %ERRORLEVEL%==0 (
 )
 
 rem Check on a Lua 5.4.7+ version
-rem findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MAJOR_N[ %TABCHAR%]"  %LUA_H%
-findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MAJOR_N[ %TABCHAR%]*5"  %LUA_H% > NUL
+findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MAJOR_N[ %TABCHAR%]"  %LUA_H% > NUL
 if %ERRORLEVEL%==0 (
-   ECHO We've got a Lua version 5.4.7+
-   SET LUA_VER=5.4
+   rem ECHO We've got a Lua version 5.4.7+
+   rem findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MAJOR_N[ %TABCHAR%]"  %LUA_H%
+   rem findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MINOR_N[ %TABCHAR%]"  %LUA_H%
+
+   for /F "delims=" %%a in ('findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MAJOR_N[ %TABCHAR%]"  %LUA_H%') do set LUA_MAJOR=%%a
+   SET LUA_MAJOR=!LUA_MAJOR:#define=!
+   SET LUA_MAJOR=!LUA_MAJOR:LUA_VERSION_MAJOR_N=!
+   SET LUA_MAJOR=!LUA_MAJOR: =!
+   SET LUA_MAJOR=!LUA_MAJOR:%TABCHAR%=!
+   SET LUA_MAJOR=!LUA_MAJOR:"=!
+   SET LUA_MAJOR=!LUA_MAJOR:~0,1!
+
+   for /F "delims=" %%a in ('findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MINOR_N[ %TABCHAR%]"  %LUA_H%') do set LUA_MINOR=%%a
+   SET LUA_MINOR=!LUA_MINOR:#define=!
+   SET LUA_MINOR=!LUA_MINOR:LUA_VERSION_MINOR_N=!
+   SET LUA_MINOR=!LUA_MINOR: =!
+   SET LUA_MINOR=!LUA_MINOR:%TABCHAR%=!
+   SET LUA_MINOR=!LUA_MINOR:"=!
+   SET LUA_MINOR=!LUA_MINOR:~0,1!
+
+   SET LUA_VER=!LUA_MAJOR!.!LUA_MINOR!
    goto :VERSION_DETECTED
 )
 
-ECHO We've got a Lua version 5.2.0 to 5.4.6
-rem findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MAJOR[ %TABCHAR%]"  %LUA_H%
-rem findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MINOR[ %TABCHAR%]"  %LUA_H%
+rem Check on a Lua version 5.2.0+ to 5.4.6
+findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MAJOR[ %TABCHAR%]"  %LUA_H% > NUL
+if %ERRORLEVEL%==0 (
+   rem ECHO We've got a Lua version 5.2.0 to 5.4.6
+   rem findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MAJOR[ %TABCHAR%]"  %LUA_H%
+   rem findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MINOR[ %TABCHAR%]"  %LUA_H%
 
-for /F "delims=" %%a in ('findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MAJOR[ %TABCHAR%]"  %LUA_H%') do set LUA_MAJOR=%%a
-SET LUA_MAJOR=!LUA_MAJOR:#define=!
-SET LUA_MAJOR=!LUA_MAJOR:LUA_VERSION_MAJOR=!
-SET LUA_MAJOR=!LUA_MAJOR: =!
-SET LUA_MAJOR=!LUA_MAJOR:%TABCHAR%=!
-SET LUA_MAJOR=!LUA_MAJOR:"=!
-SET LUA_MAJOR=!LUA_MAJOR:~0,1!
+   for /F "delims=" %%a in ('findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MAJOR[ %TABCHAR%]"  %LUA_H%') do set LUA_MAJOR=%%a
+   SET LUA_MAJOR=!LUA_MAJOR:#define=!
+   SET LUA_MAJOR=!LUA_MAJOR:LUA_VERSION_MAJOR=!
+   SET LUA_MAJOR=!LUA_MAJOR: =!
+   SET LUA_MAJOR=!LUA_MAJOR:%TABCHAR%=!
+   SET LUA_MAJOR=!LUA_MAJOR:"=!
+   SET LUA_MAJOR=!LUA_MAJOR:~0,1!
 
-for /F "delims=" %%a in ('findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MINOR[ %TABCHAR%]"  %LUA_H%') do set LUA_MINOR=%%a
-SET LUA_MINOR=!LUA_MINOR:#define=!
-SET LUA_MINOR=!LUA_MINOR:LUA_VERSION_MINOR=!
-SET LUA_MINOR=!LUA_MINOR: =!
-SET LUA_MINOR=!LUA_MINOR:%TABCHAR%=!
-SET LUA_MINOR=!LUA_MINOR:"=!
-SET LUA_MINOR=!LUA_MINOR:~0,1!
+   for /F "delims=" %%a in ('findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MINOR[ %TABCHAR%]"  %LUA_H%') do set LUA_MINOR=%%a
+   SET LUA_MINOR=!LUA_MINOR:#define=!
+   SET LUA_MINOR=!LUA_MINOR:LUA_VERSION_MINOR=!
+   SET LUA_MINOR=!LUA_MINOR: =!
+   SET LUA_MINOR=!LUA_MINOR:%TABCHAR%=!
+   SET LUA_MINOR=!LUA_MINOR:"=!
+   SET LUA_MINOR=!LUA_MINOR:~0,1!
 
-SET LUA_VER=!LUA_MAJOR!.!LUA_MINOR!
+   SET LUA_VER=!LUA_MAJOR!.!LUA_MINOR!
+   goto :VERSION_DETECTED
+)
+
+
+echo.
+echo Failed to detect the Lua version from %LUA_H%.
+goto :EXITERROR
 
 
 :VERSION_DETECTED
