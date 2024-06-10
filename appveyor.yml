@@ -8,13 +8,13 @@ environment:
   matrix:
   - LUA_VER: 5.1.5
   - LUA_VER: 5.2.4
-  - LUA_VER: 5.3.5
-  - LUA_VER: 5.4.0
+  - LUA_VER: 5.3.6
+  - LUA_VER: 5.4.6
   - LUA_VER: 5.2.4
     NOCOMPAT: true
-  - LUA_VER: 5.3.5
+  - LUA_VER: 5.3.6
     NOCOMPAT: true
-  - LUA_VER: 5.4.0
+  - LUA_VER: 5.4.6
     NOCOMPAT: true
 
 # Abuse this section so we can have a matrix with different Compiler versions
