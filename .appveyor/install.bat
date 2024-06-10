@@ -15,7 +15,7 @@ if "%LUA_VER%" NEQ "" (
 Setlocal EnableDelayedExpansion EnableExtensions
 
 if not defined SEVENZIP set SEVENZIP=7z
-if not defined LUA_URL set LUA_URL=http://www.lua.org/ftp
+if not defined LUA_URL set LUA_URL=https://www.lua.org/ftp
 ::
 :: =========================================================
 
