@@ -214,7 +214,7 @@ if %ERRORLEVEL%==0 (
    goto :VERSION_DETECTED
 )
 
-rem Check on a Lua version 5.2.0+ to 5.4.6
+rem Check on a Lua version 5.2.x to 5.4.x
 findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MAJOR[ %TABCHAR%]"  %LUA_H% > NUL
 if %ERRORLEVEL%==0 (
    rem ECHO We've got a Lua version 5.2.0 to 5.4.6
