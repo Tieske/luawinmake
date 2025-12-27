@@ -14,6 +14,7 @@ REM set the compatibility flags, defaults to empty for 5.1,
 REM -DLUA_COMPAT_ALL for 5.2, 
 REM -DLUA_COMPAT_5_2 for 5.3,
 REM -DLUA_COMPAT_5_3 for 5.4,
+REM -DLUA_COMPAT_5_4 for 5.5,
 REM which are the same as the unix make files
 REM This setting can be overridden with the --nocompat flag
 SET COMPATFLAG=
@@ -78,7 +79,7 @@ SET HELPCMDS=help -help --help /help ? -? /?
 for %%L in ("!LFCHAR!") do for /f %%a in ("!HELPCMDS: =%%~L!") do (
    if "%%a"=="%~1" (
       echo.
-      echo Builds a standalone Lua installation. Supports Lua version 5.1, 5.2, 5.3, and 5.4.
+      echo Builds a standalone Lua installation. Supports Lua version 5.1, 5.2, 5.3, 5.4, and 5.5.
       echo Your compiler must be in the system path, and this "%BATCHNAME%.bat" file
       echo should ^(preferably^) be located in ".\etc\" in the unpacked Lua source archive.
       echo.
@@ -178,13 +179,46 @@ IF NOT EXIST "%LUA_H%" (
    goto :EXITERROR
 )
 
+rem Check on a Lua 5.1 version
 findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MAJOR"  %LUA_H% > NUL
 if NOT %ERRORLEVEL%==0 (
-   rem ECHO We've got a Lua version 5.1
+   rem ECHO We've got a Lua version 5.1.x
    rem findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION[ %TABCHAR%]"  %LUA_H%
    SET LUA_VER=5.1
-) else (
-   rem ECHO We've got a Lua version 5.2+
+   goto :VERSION_DETECTED
+)
+
+rem Check on a Lua 5.5+ version
+findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MAJOR_N[ %TABCHAR%]"  %LUA_H% > NUL
+if %ERRORLEVEL%==0 (
+   rem ECHO We've got a Lua version 5.5+
+   rem findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MAJOR_N[ %TABCHAR%]"  %LUA_H%
+   rem findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MINOR_N[ %TABCHAR%]"  %LUA_H%
+
+   for /F "delims=" %%a in ('findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MAJOR_N[ %TABCHAR%]"  %LUA_H%') do set LUA_MAJOR=%%a
+   SET LUA_MAJOR=!LUA_MAJOR:#define=!
+   SET LUA_MAJOR=!LUA_MAJOR:LUA_VERSION_MAJOR_N=!
+   SET LUA_MAJOR=!LUA_MAJOR: =!
+   SET LUA_MAJOR=!LUA_MAJOR:%TABCHAR%=!
+   SET LUA_MAJOR=!LUA_MAJOR:"=!
+   SET LUA_MAJOR=!LUA_MAJOR:~0,1!
+
+   for /F "delims=" %%a in ('findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MINOR_N[ %TABCHAR%]"  %LUA_H%') do set LUA_MINOR=%%a
+   SET LUA_MINOR=!LUA_MINOR:#define=!
+   SET LUA_MINOR=!LUA_MINOR:LUA_VERSION_MINOR_N=!
+   SET LUA_MINOR=!LUA_MINOR: =!
+   SET LUA_MINOR=!LUA_MINOR:%TABCHAR%=!
+   SET LUA_MINOR=!LUA_MINOR:"=!
+   SET LUA_MINOR=!LUA_MINOR:~0,1!
+
+   SET LUA_VER=!LUA_MAJOR!.!LUA_MINOR!
+   goto :VERSION_DETECTED
+)
+
+rem Check on a Lua version 5.2.x to 5.4.x
+findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MAJOR[ %TABCHAR%]"  %LUA_H% > NUL
+if %ERRORLEVEL%==0 (
+   rem ECHO We've got a Lua version 5.2.x to 5.4.x
    rem findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MAJOR[ %TABCHAR%]"  %LUA_H%
    rem findstr /R /C:"#define[ %TABCHAR%][ %TABCHAR%]*LUA_VERSION_MINOR[ %TABCHAR%]"  %LUA_H%
 
@@ -205,7 +239,16 @@ if NOT %ERRORLEVEL%==0 (
    SET LUA_MINOR=!LUA_MINOR:~0,1!
 
    SET LUA_VER=!LUA_MAJOR!.!LUA_MINOR!
+   goto :VERSION_DETECTED
 )
+
+
+echo.
+echo Failed to detect the Lua version from %LUA_H%.
+goto :EXITERROR
+
+
+:VERSION_DETECTED
 SET LUA_SVER=!LUA_VER:.=!
 
 Echo Lua version found: %LUA_VER%
@@ -255,6 +298,16 @@ if %LUA_SVER%==54 (
    set INSTALL_H=lauxlib.h lua.h lua.hpp luaconf.h lualib.h
    if "%COMPATFLAG%"=="" (
       set COMPATFLAG=-DLUA_COMPAT_5_3
+   )
+)
+if %LUA_SVER%==55 (
+   set FILES_CORE=lapi lcode lctype ldebug ldo ldump lfunc lgc llex lmem lobject lopcodes lparser lstate lstring ltable ltm lundump lvm lzio lauxlib
+   set FILES_LIB=lbaselib lcorolib ldblib liolib lmathlib loadlib loslib lstrlib ltablib lutf8lib linit
+   set FILES_DLL=lua
+   set FILES_OTH=luac
+   set INSTALL_H=lauxlib.h lua.h lua.hpp luaconf.h lualib.h
+   if "%COMPATFLAG%"=="" (
+      set COMPATFLAG=-DLUA_COMPAT_5_4
    )
 )
 
